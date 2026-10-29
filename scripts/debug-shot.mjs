@@ -1,0 +1,11 @@
+﻿import { chromium } from "playwright"
+const browser = await chromium.launch({ args: ["--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader"] })
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+await page.goto("http://127.0.0.1:5173/", { waitUntil: "domcontentloaded" })
+await page.waitForTimeout(4000)
+const info = await page.evaluate(() => { const el = document.getElementById("object"); return { top: el.getBoundingClientRect().top + scrollY, height: el.offsetHeight } })
+await page.evaluate((y) => window.scrollTo({ top: y, behavior: "instant" }), info.top + info.height * 0.55)
+await page.waitForTimeout(2500)
+await page.screenshot({ path: "shots/object-b-noanim.png", timeout: 90000 })
+console.log("done")
+await browser.close()
